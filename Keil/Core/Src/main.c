@@ -19,6 +19,8 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 
+#include "checksum.h"
+
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 
@@ -64,6 +66,13 @@ static void MX_GPIO_Init(void);
 int main(void)
 {
   /* USER CODE BEGIN 1 */
+	
+	/* TEST CODE FOR CHECKSUM USAGE */
+	unsigned char data[] = { 0x01, 0x77 };
+	int length = sizeof(data) / sizeof(data[0]);
+
+	unsigned short chechsum = calculateCRC16(data, length);
+	
 
   /* USER CODE END 1 */
 
