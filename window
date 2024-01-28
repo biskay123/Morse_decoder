@@ -1,0 +1,6 @@
+from tkinter import *
+
+mw = Tk()
+mw.geometry('600x400')
+
+mw.mainloop()
