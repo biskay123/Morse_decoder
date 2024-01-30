@@ -41,11 +41,11 @@ void textToMorse(char text[], int size) {
     for (int i = 0; i < size; i++) {
         if (text[i] >= 'A' && text[i] <= 'Z') {
             int index = text[i] - 'A';
-            printf("%s ", morseCode[index]);
+            printf("%s", morseCode[index]);
         }
         else if (text[i] >= 'a' && text[i] <= 'z') {
             int index = text[i] - 'a';
-            printf("%s ", morseCode[index]);
+            printf("%s", morseCode[index]);
         }
         
     }
