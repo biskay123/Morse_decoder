@@ -1,0 +1,7 @@
+void Uart_Send(uint16_t byte_count, uint32_t *data_buffer_ptr) {
+    HAL_UART_Transmit(&huart1, (uint8_t*)data_buffer_ptr, byte_count * sizeof(uint32_t), HAL_MAX_DELAY);
+}
+
+void Uart_Receive(uint16_t byte_count, uint32_t *data_buffer_ptr) {
+    HAL_UART_Receive(&huart1, (uint8_t*)data_buffer_ptr, byte_count * sizeof(uint32_t), HAL_MAX_DELAY);
+}
