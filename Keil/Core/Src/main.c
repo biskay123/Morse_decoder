@@ -21,8 +21,6 @@
 
 #include "checksum.h"
 
-#include "morse_encryption(STM32).h"
-
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 
