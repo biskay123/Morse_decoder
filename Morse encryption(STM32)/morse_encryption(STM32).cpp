@@ -1,8 +1,6 @@
-#include <stdio.h>
-#include <string.h>
-
-void textToMorse(char text[], int size) {
-    char morseCode[26][5] = {
+const char* textToMorse(char text[], int size) {
+   
+    static char morseCode[26][5] = {
         "01",    // A
         "1000",  // B
         "1010",  // C
@@ -34,28 +32,45 @@ void textToMorse(char text[], int size) {
         "1011",  // Y
 
         "1100",  // Z
-
-       
     };
 
+    // Статична змінна для зберігання результату
+    static char result[100]; 
+    // Індекс для відстеження позиції у рядку
+    int resultIndex = 0;
+
+    
     for (int i = 0; i < size; i++) {
-        if (text[i] >= 'A' && text[i] <= 'Z') {
-            int index = text[i] - 'A';
-            printf("%s", morseCode[index]);
-        }
-        else if (text[i] >= 'a' && text[i] <= 'z') {
-            int index = text[i] - 'a';
-            printf("%s", morseCode[index]);
-        }
         
+        if (text[i] == ' ') {
+            // Додавання пробілу між словами
+            result[resultIndex++] = '3';
+        }
+        else {
+            // Перевірка, чи символ є великою літерою
+            if (text[i] >= 'A' && text[i] <= 'Z') {
+                int index = text[i] - 'A';
+                strcpy_s(&result[resultIndex], sizeof(result) - resultIndex, morseCode[index]);
+                resultIndex += strlen(morseCode[index]);
+
+                // Цифра '2' як роздільник між кодами Морзе
+                result[resultIndex++] = '2';
+            }
+            else if (text[i] >= 'a' && text[i] <= 'z') {
+                // Розрахунок індексу у масиві morseCode для малої літери
+                int index = text[i] - 'a';
+                // Додавання коду Морзе у рядок результату
+                strcpy_s(&result[resultIndex], sizeof(result) - resultIndex, morseCode[index]);
+                // Оновлення resultIndex на основі доданого коду Морзе
+                resultIndex += strlen(morseCode[index]);
+
+                result[resultIndex++] = '2';
+            }
+        }
     }
-}
 
-int main() {
-    char inputText[] = "Hello World";
-    int textSize = strlen(inputText);
+    // Завершення рядка нульовим символом
+    result[resultIndex] = '\0';
 
-    textToMorse(inputText, textSize);
-
-    return 0;
+    return result;
 }
