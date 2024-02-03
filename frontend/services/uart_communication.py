@@ -1,5 +1,5 @@
 import serial
-import time
+
 
 class UARTCommunication:
     def __init__(self, port, baud_rate):
