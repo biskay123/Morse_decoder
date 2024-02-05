@@ -1,9 +1,9 @@
 --cpu Cortex-M0
 "test_environmental\startup_stm32f051x8.o"
+"test_environmental\checksum.o"
 "test_environmental\main.o"
 "test_environmental\stm32f0xx_it.o"
 "test_environmental\stm32f0xx_hal_msp.o"
-"test_environmental\checksum.o"
 "test_environmental\stm32f0xx_hal_rcc.o"
 "test_environmental\stm32f0xx_hal_rcc_ex.o"
 "test_environmental\stm32f0xx_hal.o"
