@@ -1,3 +1,5 @@
+import binascii
+
 from frontend.services.Command import Command
 from frontend.services.CommandConstants import CommandConstants
 from frontend.services.checksum import calculate_crc16
@@ -10,7 +12,7 @@ class PCtoSTMRequestSTMID(Command):
         # Expected message structure
         expected_command_code = CommandConstants.PC_TO_STM_REQUEST_STM_ID
         expected_stm_id = CommandConstants.STM_ID
-        empty_byte = 0x00
+        empty_byte = [0x00]
         expected_checksum = calculate_crc16(empty_byte)
 
         # Byte Sequence
@@ -33,7 +35,7 @@ class PCtoSTMRequestSTMID(Command):
             if (received_command_code == expected_command_code and
                     received_stm_id == expected_stm_id):
                 # Validate checksum
-                calculated_checksum = calculate_crc16(received_data[:-2])
+                calculated_checksum = calculate_crc16(list(received_data[:-2]))
                 if calculated_checksum == received_checksum:
                     print("Received STM Id:", received_stm_id)
                     return True
@@ -51,12 +53,14 @@ class PCtoSTMEncryptRequest(Command):
     def execute(self, input_data, uart_communication):
         print("Invoked PCtoSTMEncryptRequest")
 
-        # Construct the byte sequence for the request
         command_code = 0x02
-        block_size = len(input_data).to_bytes(4, 'big')  # Convert data length to 4-byte integer
-        checksum = calculate_crc16(block_size + input_data)  # Include block size in checksum calculation
 
-        byte_sequence = bytes([command_code, block_size, input_data, checksum.to_bytes(2, 'big')])
+        input_data_bytes = input_data.encode('utf-8')  # Encode input_data to bytes
+        block_size = len(input_data_bytes).to_bytes(4, 'big')  # Convert block size to bytes
+        checksum = calculate_crc16(input_data_bytes + block_size)
+
+        # Create byte sequence
+        byte_sequence = bytes([command_code]) + block_size + input_data_bytes + checksum.to_bytes(2, 'big')
 
         # Send data
         uart_communication.send_data(byte_sequence)
@@ -89,7 +93,7 @@ class PCtoSTMEncryptRequest(Command):
             received_checksum = int.from_bytes(received_data[-2:], 'big')
 
             # Validate checksum
-            calculated_checksum = calculate_crc16(received_data[:-2])
+            calculated_checksum = calculate_crc16(list(received_data[:-2]))
             if calculated_checksum == received_checksum:
                 print("Received converted data:", received_converted_data.decode('utf-8'))  # Convert bytes to string
                 return received_converted_data.decode('utf-8')  # Return converted data as string
@@ -107,7 +111,7 @@ class PCtoSTMRequestMaxMessageSize(Command):
 
         # Message Structure
         command_code = CommandConstants.PC_TO_STM_REQUEST_MAX_MESSAGE_SIZE
-        empty_byte = 0x00
+        empty_byte = [0x00]
 
         # Byte Sequence
         checksum = calculate_crc16(empty_byte)
@@ -141,7 +145,7 @@ class PCtoSTMRequestMaxMessageSize(Command):
                 received_checksum = int.from_bytes(received_data[-2:], 'big')
 
                 # Validate checksum
-                calculated_checksum = calculate_crc16(received_data[:-2])
+                calculated_checksum = calculate_crc16(list(received_data[:-2]))
                 if calculated_checksum == received_checksum:
                     print("Received Max Message Size:", received_max_size)
                     return received_max_size  # Return maximum message size
@@ -245,3 +249,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
