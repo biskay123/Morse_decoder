@@ -1,76 +1,160 @@
-const char* textToMorse(char text[], int size) {
-   
-    static char morseCode[26][5] = {
-        "01",    // A
-        "1000",  // B
-        "1010",  // C
-        "100",   // D
-        "0",     // E
+char* morseCode(char* message) {
+    size_t length = strlen(message);
+    char* encoded = (char*)malloc(5 * length);  // Assuming each character is at most 5 Morse code characters long
 
-        "0010",  // F
-        "110",   // G
-        "0000",  // H
-        "00",    // I
-        "1011",  // J
+    // Set the first character to '\0' to initialize an empty string
+    encoded[0] = '\0';
 
-        "1100",  // K
-        "101",   // L
-        "1111",  // M
-        "10",    // N
-        "111",   // O
+    for (size_t i = 0; i < length; i++) {
+        char x = message[i];
 
-        "0110",  // P
-        "1101",  // Q
-        "0100",  // R
-        "000",   // S
-        "1",     // T
+        switch (x) {
+            case 'a':
+        case 'A':
+            strcat(encoded, "10");
+            break;
+        case 'b':
+        case 'B':
+            strcat(encoded, "0111");
+            break;
+        case 'c':
+        case 'C':
+            strcat(encoded, "0101");
+            break;
+        case 'd':
+        case 'D':
+            strcat(encoded, "011");
+            break;
+        case 'e':
+        case 'E':
+            strcat(encoded, "1");
+            break;
+        case 'f':
+        case 'F':
+            strcat(encoded, "1101");
+            break;
+        case 'g':
+        case 'G':
+            strcat(encoded, "001");
+            break;
+        case 'h':
+        case 'H':
+            strcat(encoded, "1111");
+            break;
+        case 'i':
+        case 'I':
+            strcat(encoded, "11");
+            break;
+        case 'j':
+        case 'J':
+            strcat(encoded, "1000");
+            break;
+        case 'k':
+        case 'K':
+            strcat(encoded, "010");
+            break;
+        case 'l':
+        case 'L':
+            strcat(encoded, "1011");
+            break;
+        case 'm':
+        case 'M':
+            strcat(encoded, "00");
+            break;
+        case 'n':
+        case 'N':
+            strcat(encoded, "01");
+            break;
+        case 'o':
+        case 'O':
+            strcat(encoded, "000");
+            break;
+        case 'p':
+        case 'P':
+            strcat(encoded, "1001");
+            break;
+        case 'q':
+        case 'Q':
+            strcat(encoded, "0010");
+            break;
+        case 'r':
+        case 'R':
+            strcat(encoded, "101");
+            break;
+        case 's':
+        case 'S':
+            strcat(encoded, "111");
+            break;
+        case 't':
+        case 'T':
+            strcat(encoded, "0");
+            break;
+        case 'u':
+        case 'U':
+            strcat(encoded, "110");
+            break;
+        case 'v':
+        case 'V':
+            strcat(encoded, "1110");
+            break;
+        case 'w':
+        case 'W':
+            strcat(encoded, "100");
+            break;
+        case 'x':
+        case 'X':
+            strcat(encoded, "0110");
+            break;
+        case 'y':
+        case 'Y':
+            strcat(encoded, "0100");
+            break;
+        case 'z':
+        case 'Z':
+            strcat(encoded, "0011");
+            break;
+        case '1':
+            strcat(encoded, "10000");
+            break;
+        case '2':
+            strcat(encoded, "11000");
+            break;
+        case '3':
+            strcat(encoded, "11100");
+            break;
+        case '4':
+            strcat(encoded, "11110");
+            break;
+        case '5':
+            strcat(encoded, "11111");
+            break;
+        case '6':
+            strcat(encoded, "01111");
+            break;
+        case '7':
+            strcat(encoded, "00111");
+            break;
+        case '8':
+            strcat(encoded, "00011");
+            break;
+        case '9':
+            strcat(encoded, "00001");
+            break;
+        case '0':
+            strcat(encoded, "00000");
+            break;
+        case ' ':
+                strcat(encoded, "3");  // 3 для пробілів
+                break;
 
-        "001",   // U
-        "0001",  // V
-        "011",   // W
-        "1001",  // X
-        "1011",  // Y
-
-        "1100",  // Z
-    };
-
-    // Статична змінна для зберігання результату
-    static char result[100]; 
-    // Індекс для відстеження позиції у рядку
-    int resultIndex = 0;
-
-    
-    for (int i = 0; i < size; i++) {
-        
-        if (text[i] == ' ') {
-            // Додавання пробілу між словами
-            result[resultIndex++] = '3';
+            default:
+                fprintf(stderr, "Found invalid character: %c\n", x);
+                exit(EXIT_FAILURE);
         }
-        else {
-            // Перевірка, чи символ є великою літерою
-            if (text[i] >= 'A' && text[i] <= 'Z') {
-                int index = text[i] - 'A';
-                strcpy_s(&result[resultIndex], sizeof(result) - resultIndex, morseCode[index]);
-                resultIndex += strlen(morseCode[index]);
 
-                // Цифра '2' як роздільник між кодами Морзе
-                result[resultIndex++] = '2';
-            }
-            else if (text[i] >= 'a' && text[i] <= 'z') {
-                // Розрахунок індексу у масиві morseCode для малої літери
-                int index = text[i] - 'a';
-                // Додавання коду Морзе у рядок результату
-                strcpy_s(&result[resultIndex], sizeof(result) - resultIndex, morseCode[index]);
-                // Оновлення resultIndex на основі доданого коду Морзе
-                resultIndex += strlen(morseCode[index]);
-
-                result[resultIndex++] = '2';
-            }
-        }
+        if (i < length - 1 && x != ' ' && message[i + 1] != ' ')
+            strcat(encoded, "2");  // 2 для розділу букв
     }
 
-    // Завершення рядка нульовим символом
-    result[resultIndex] = '\0';
-
-    return result;
+    return encoded;
 }
