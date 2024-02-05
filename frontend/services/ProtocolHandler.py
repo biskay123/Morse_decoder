@@ -9,14 +9,15 @@ from frontend.services.uart_communication import UARTCommunication
 class PCtoSTMRequestSTMID(Command):
     def execute(self, input_data, uart_communication):
         print("Invoked PCtoSTMRequestSTMID")
+
         # Expected message structure
         expected_command_code = CommandConstants.PC_TO_STM_REQUEST_STM_ID
         expected_stm_id = CommandConstants.STM_ID
-        empty_byte = [0x00]
-        expected_checksum = calculate_crc16(empty_byte)
+        empty_byte = 0x00
+        expected_checksum = calculate_crc16([expected_command_code] + [empty_byte])
 
         # Byte Sequence
-        byte_sequence = bytes([expected_command_code, empty_byte, expected_checksum.to_bytes(2, 'big')])
+        byte_sequence = bytes([expected_command_code, empty_byte]) + expected_checksum.to_bytes(2, 'big')
 
         # Send data
         uart_communication.send_data(byte_sequence)
@@ -53,11 +54,11 @@ class PCtoSTMEncryptRequest(Command):
     def execute(self, input_data, uart_communication):
         print("Invoked PCtoSTMEncryptRequest")
 
-        command_code = 0x02
+        command_code = CommandConstants.PC_TO_STM_ENCRYPT_REQUEST
 
         input_data_bytes = input_data.encode('utf-8')  # Encode input_data to bytes
         block_size = len(input_data_bytes).to_bytes(4, 'big')  # Convert block size to bytes
-        checksum = calculate_crc16(input_data_bytes + block_size)
+        checksum = calculate_crc16(command_code.to_bytes() + input_data_bytes + block_size)
 
         # Create byte sequence
         byte_sequence = bytes([command_code]) + block_size + input_data_bytes + checksum.to_bytes(2, 'big')
@@ -111,11 +112,12 @@ class PCtoSTMRequestMaxMessageSize(Command):
 
         # Message Structure
         command_code = CommandConstants.PC_TO_STM_REQUEST_MAX_MESSAGE_SIZE
-        empty_byte = [0x00]
+        empty_byte = 0x00
 
         # Byte Sequence
-        checksum = calculate_crc16(empty_byte)
-        byte_sequence = bytes([command_code, empty_byte, checksum.to_bytes(2, 'big')])
+        checksum = calculate_crc16([command_code] + [empty_byte])
+
+        byte_sequence = bytes([command_code, empty_byte]) + checksum.to_bytes(2, 'big')
 
         # Send data
         uart_communication.send_data(byte_sequence)
@@ -249,4 +251,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
