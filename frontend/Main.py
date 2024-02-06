@@ -30,13 +30,18 @@ from PIL import Image, ImageTk
 from Constants import Constants
 from frames.FirstFrame import FirstFrame
 from frames.SecondFrame import SecondFrame
+from frontend.services.CommandConstants import CommandConstants
+from frontend.services.ProtocolHandler import ProtocolHandler
+from frontend.services.uart_communication import UARTCommunication
 
 
 class TextWindow:
-    def __init__(self, root):
+    def __init__(self, root, uart_communication):
+        self.uart_communication = uart_communication
         self.root = root
         self.root.geometry(Constants.WINDOW_SIZE)
 
+        self.uart_communication = uart_communication
         # Load the image file
         image = Image.open("resources/background.png")
         background_photo = ImageTk.PhotoImage(image)
@@ -56,7 +61,16 @@ class TextWindow:
         input1_value = self.second_frame.input.get("1.0", "end-1c")  # String input
         switch_value = self.second_frame.segmented_button_var.get().strip()  # 'Encode' or 'Decode' values
 
-        self.second_frame.output.insert("0.0", switch_value + " " + input1_value)
+        processor = ProtocolHandler()
+        command = CommandConstants.PC_TO_STM_REQUEST_MAX_MESSAGE_SIZE
+
+        checkMaxSize = processor.process_command(command, input1_value, self.uart_communication)
+        if input1_value.length < checkMaxSize:
+            command = CommandConstants.PC_TO_STM_ENCRYPT_REQUEST
+            encodedMessage = processor.process_command(command, input1_value, self.uart_communication)
+            self.second_frame.output.insert("0.0", switch_value + " " + encodedMessage)
+        else:
+            self.second_frame.output.insert("0.0", "Error, please try again")
 
     def show_second_frame(self):
         if self.check_uart_connection():
@@ -67,11 +81,23 @@ class TextWindow:
             self.first_frame.error_label.pack(side=tk.TOP, pady=(20, 0))
 
     def check_uart_connection(self):
+        processor = ProtocolHandler()
+        command = CommandConstants.PC_TO_STM_REQUEST_STM_ID
+        input_data = 0x00
+        result = processor.process_command(command, input_data, self.uart_communication)
         # When you click on 'Connect' button, this method is invoked
-        return True  # Replace with actual logic
+        return result
 
 
 if __name__ == "__main__":
+    # Set your COM port and baud rate
+    com_port = Constants.COM_PORT
+    baud_rate = Constants.BAUD_RATE
+
+    # Create an instance of UARTCommunication
+    uart_communication = UARTCommunication(com_port, baud_rate)
+    uart_communication.open_port()
+
     root = tk.Tk()
-    app = TextWindow(root)
+    app = TextWindow(root, uart_communication)
     root.mainloop()

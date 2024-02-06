@@ -67,6 +67,9 @@ class Constants:
     SUB_TEXT_COLOR = "#979797"
     BG_COLOR = "#EBEAEA"
 
+    COM_PORT = 'COM4'
+    BAUD_RATE = 9600
+
     TEXT_BOX_WIDTH = 550
     TEXT_BOX_HEIGHT = 200
     TEXT_BOX_CORNER_RADIUS = 10

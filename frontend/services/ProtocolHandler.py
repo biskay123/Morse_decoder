@@ -58,7 +58,7 @@ class PCtoSTMEncryptRequest(Command):
 
         input_data_bytes = input_data.encode('utf-8')  # Encode input_data to bytes
         block_size = len(input_data_bytes).to_bytes(4, 'big')  # Convert block size to bytes
-        checksum = calculate_crc16(command_code.to_bytes() + input_data_bytes + block_size)
+        checksum = calculate_crc16([command_code.to_bytes()] + [input_data_bytes] + [block_size])
 
         # Create byte sequence
         byte_sequence = bytes([command_code]) + block_size + input_data_bytes + checksum.to_bytes(2, 'big')
