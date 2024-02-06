@@ -1,5 +1,3 @@
-import binascii
-
 from frontend.services.Command import Command
 from frontend.services.CommandConstants import CommandConstants
 from frontend.services.checksum import calculate_crc16
